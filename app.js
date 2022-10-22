@@ -22,14 +22,28 @@ const parsing = async function () {
   );
 
   const $ = cheerio.load($html.data);
-  const $holderList = $("tbody").children("tr");
+
+  const holders = await getHolders($);
+
+};
+
+const getHolders = async function ($target) {
+  const holders = [];
+
+  const $holderList = $target("tbody").children("tr");
+  console.log("!!, ", $holderList);
   $holderList.each(function (i, elem) {
-    const $td = $(elem).children("td");
+    const $td = $target(elem).children("td");
     const $address = $td.eq(1);
     const $amount = $td.eq(2);
-    console.log($address.text(), $amount.text());
+    if ($td && $address && $amount) {
+      holders.push({
+        address: $address.text().trim(),
+        amount: $amount.text().trim(),
+      });
+    }
   });
-  console.log($holderList.length);
+  return holders;
 };
 
 parsing();
